@@ -7,6 +7,8 @@ import os
 logging.basicConfig(level=logging.INFO)
 
 
+image_extensions = ["jpg", "png"]
+
 def scan(root_scan_dir, trash_dir):
     logging.info("Start scan")
 
@@ -14,7 +16,7 @@ def scan(root_scan_dir, trash_dir):
 
     root_dir = Path(root_scan_dir)
     trash_dir = Path(trash_dir)
-    image_list = _list_files(root_dir, ["jpg", "png"])
+    image_list = _list_files(root_dir, image_extensions)
 
     logging.info("Found {} images".format(len(image_list)))
     for image_path in image_list:
@@ -30,6 +32,13 @@ def scan(root_scan_dir, trash_dir):
                 os.rename(image_path, trash_dir / image_path.name)
             except OSError as ex:
                 logging.error("Unable to move image: {}: {}".format(image_path, ex))
+
+
+def count_images(root_scan_dir):
+    root_dir = Path(root_scan_dir)
+    image_list = _list_files(root_dir, image_extensions)
+    logging.info("Found {} images".format(len(image_list)))
+
 
 def _get_image_hash(image_path):
     try:
@@ -51,4 +60,5 @@ def _list_files(root_dir: Path, extensions: list):
 if __name__ == '__main__':
     fire.Fire({
         'scan': scan,
+        'count': count_images,
     })
