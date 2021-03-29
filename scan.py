@@ -25,8 +25,11 @@ def scan(root_scan_dir, trash_dir):
         if hash not in image_hash_map:
             image_hash_map[hash] = image_path
         else:
-            logging.info("Duplicate found: {}".format(image_path))           
-            os.rename(image_path, trash_dir / image_path.name)
+            logging.info("Duplicate found: {}".format(image_path))
+            try:
+                os.rename(image_path, trash_dir / image_path.name)
+            except OSError as ex:
+                logging.error("Unable to move image: {}: {}".format(image_path, ex))
 
 def _get_image_hash(image_path):
     try:
